@@ -1,49 +1,49 @@
 ---
 name: vault-project
 description: >
-  Crea y gestiona un sistema de notas markdown interconectadas (AI Vault Protocol)
-  para gestión de proyectos y memoria a largo plazo. Úsalo cuando el usuario quiera
-  inicializar un vault nuevo, crear un proyecto con sus notas enlazadas (Landing,
-  Brief, Map, State, Decisions, References), o actualizar el estado de un proyecto
-  existente. Triggear con: "crea un vault", "nuevo proyecto en el vault", "actualiza
-  el state del proyecto", "/vault-project".
+  Creates and manages an interconnected markdown note system (AI Vault Protocol)
+  for project management and long-term memory. Use it when the user wants to
+  initialize a new vault, create a project with linked notes (Landing, Brief, Map,
+  State, Decisions, References, Changelog), or update an existing project.
+  Trigger with: "create a vault", "new project in the vault", "update project state",
+  "/vault-project".
 tools: Read, Write, Edit, Glob, Bash
 user-invocable: true
 ---
 
 # vault-project — AI Vault Protocol Manager
 
-Crea y gestiona un sistema de notas markdown interconectadas para gestión de proyectos y memoria a largo plazo de agentes IA.
+Creates and manages an interconnected markdown note system for project management and long-term memory of AI agents.
 
 ---
 
-## Phase 1 — Detectar intención
+## Phase 1 — Detect intent
 
-Lee los argumentos del usuario y clasifica la acción:
+Read the user's arguments and classify the action:
 
-| Argumento / intención detectada | Acción |
-|----------------------------------|--------|
-| `init`, "inicializar vault", "crear vault" | → Phase 2A |
-| `new`, "nuevo proyecto", "crear proyecto" | → Phase 2B |
-| `update`, "actualizar state", "actualizar estado" | → Phase 2C |
-| Sin argumentos claros | Pregunta al usuario cuál de las 3 acciones quiere y espera respuesta |
+| Argument / detected intent | Action |
+|----------------------------|--------|
+| `init`, "initialize vault", "create vault" | → Phase 2A |
+| `new`, "new project", "create project" | → Phase 2B |
+| `update`, "update state", "update project" | → Phase 2C |
+| No clear arguments | Ask the user which of the 3 actions they want and wait for response |
 
 ---
 
-## Phase 2A — Inicializar vault (`init`)
+## Phase 2A — Initialize vault (`init`)
 
-1. Pregunta la ruta del vault. Default: `~/Documents/Vault`. Si el usuario no indica otra, usa el default.
-2. Expande `~` a la ruta absoluta del home del usuario usando `echo $HOME`.
-3. Crea la estructura con Bash:
+1. Ask for the vault path. Default: `~/Documents/Vault`. If the user does not specify another, use the default.
+2. Expand `~` to the absolute home path using `echo $HOME`.
+3. Create the structure with Bash:
    ```bash
-   mkdir -p "{vault}/Proyectos"
+   mkdir -p "{vault}/Projects"
    ```
-4. Crea `{vault}/START HERE - AI.md` con Write usando esta plantilla exacta:
+4. Create `{vault}/START HERE - AI.md` with Write using this exact template:
 
 ```markdown
 ---
 type: meta
-updated: {fecha-hoy}
+updated: {today}
 ---
 
 # START HERE - AI
@@ -56,7 +56,7 @@ Read this note before exploring or writing anything else in the vault.
 
 ## Project Entry Order
 For project work, read in this order:
-1. Project landing note in `Proyectos/`
+1. Project landing note in `Projects/`
 2. `Brief`
 3. `Map`
 4. `State`
@@ -92,6 +92,10 @@ Only durable, still-relevant choices.
 ### Project References
 Remotes, docs, and related notes only.
 
+### Project Changelog
+Chronological history by sprint or version. Format based on [keepachangelog.com](https://keepachangelog.com/en/1.1.0/)
+Body: [Unreleased] · [{Sprint/version} — date] with subsections Added, Changed, Fixed, Decided.
+
 ## Token Discipline
 - Avoid long narrative dumps.
 - Summaries should be shorter than source material.
@@ -99,199 +103,227 @@ Remotes, docs, and related notes only.
 - Move stale detail to references or archive notes.
 ```
 
-5. Muestra al usuario la estructura creada y confirma el éxito.
+5. Show the user the created structure and confirm success.
 
 ---
 
-## Phase 2B — Nuevo proyecto (`new`)
+## Phase 2B — New project (`new`)
 
-1. Pide al usuario (si no los proporcionó como args):
-   - **Nombre del proyecto** (será el nombre de la carpeta y prefijo de todos los archivos)
-   - **Área** (ej: "desarrollo", "investigación", "diseño")
-   - **Prioridad** (alta / media / baja)
-   - **Ruta del vault** (default: `~/Documents/Vault`)
-   - **Kind** (ej: "software", "research", "design", "ops") — opcional, default: "software"
-   - **Remote** (URL del repo u otro remote) — opcional, default: ""
+1. Ask the user (if not provided as args):
+   - **Project name** (will be the folder name and prefix for all files)
+   - **Area** (e.g. "development", "research", "design")
+   - **Priority** (high / medium / low)
+   - **Vault path** (default: `~/Documents/Vault`)
+   - **Kind** (e.g. "software", "research", "design", "ops") — optional, default: "software"
+   - **Remote** (repo URL or other remote) — optional, default: ""
 
-2. Expande `~` con `echo $HOME` y construye la ruta base: `{vault}/Proyectos/{Nombre}/`
+2. Expand `~` with `echo $HOME` and build the base path: `{vault}/Projects/{Name}/`
 
-3. Crea la carpeta:
+3. Create the folder:
    ```bash
-   mkdir -p "{vault}/Proyectos/{Nombre}"
+   mkdir -p "{vault}/Projects/{Name}"
    ```
 
-4. Crea los 6 archivos del proyecto. Usa la fecha de hoy en formato `YYYY-MM-DD`.
+4. Create the 7 project files. Use today's date in `YYYY-MM-DD` format.
 
-### Archivo 1: `{Nombre}.md` (Landing)
+### File 1: `{Name}.md` (Landing)
 
 ```markdown
 ---
 type: project
 status: active
 area: {area}
-updated: {fecha}
-root: Proyectos/{Nombre}/
+updated: {date}
+root: Projects/{Name}/
 kind: {kind}
 remote: "{remote}"
-priority: {prioridad}
+priority: {priority}
 ---
 
-# {Nombre}
+# {Name}
 
 ## Entry
-[[{Nombre} Brief]] · [[{Nombre} Map]] · [[{Nombre} State]]
+[[{Name} Brief]] · [[{Name} Map]] · [[{Name} State]] · [[{Name} Changelog]]
 
 ## Quick Facts
-- **Área:** {area}
-- **Prioridad:** {prioridad}
+- **Area:** {area}
+- **Priority:** {priority}
 - **Kind:** {kind}
-- **Iniciado:** {fecha}
+- **Started:** {date}
 - **Remote:** {remote}
 
 ## Related
 - [[START HERE - AI]]
-- [[{Nombre} Decisions]]
-- [[{Nombre} References]]
+- [[{Name} Decisions]]
+- [[{Name} References]]
+- [[{Name} Changelog]]
 ```
 
-### Archivo 2: `{Nombre} Brief.md`
+### File 2: `{Name} Brief.md`
 
 ```markdown
 ---
 type: brief
-project: {Nombre}
-updated: {fecha}
+project: {Name}
+updated: {date}
 ---
 
-# {Nombre} Brief
+# {Name} Brief
 
-← [[{Nombre}]]
+← [[{Name}]]
 
 ## Objective
-_¿Qué se quiere lograr?_
+_What is the goal of this project?_
 
 ## Scope
-_¿Qué incluye y qué excluye este proyecto?_
+_What is included and excluded from this project?_
 
 ## Current State
-_Estado actual al {fecha}._
+_Current state as of {date}._
 
 ## Next Actions
 - [ ] 
 ```
 
-### Archivo 3: `{Nombre} Map.md`
+### File 3: `{Name} Map.md`
 
 ```markdown
 ---
 type: map
-project: {Nombre}
-updated: {fecha}
+project: {Name}
+updated: {date}
 ---
 
-# {Nombre} Map
+# {Name} Map
 
-← [[{Nombre}]]
+← [[{Name}]]
 
 ## Important Paths
-_Rutas clave del proyecto (código, docs, assets)._
+_Key paths in the project (code, docs, assets)._
 
 ## Ignore By Default
-_Carpetas o archivos a ignorar al explorar._
+_Folders or files to skip when exploring._
 
 ## Notes
-_Observaciones sobre la estructura._
+_Observations about the structure._
 ```
 
-### Archivo 4: `{Nombre} State.md`
+### File 4: `{Name} State.md`
 
 ```markdown
 ---
 type: state
-project: {Nombre}
-updated: {fecha}
+project: {Name}
+updated: {date}
 ---
 
-# {Nombre} State
+# {Name} State
 
-← [[{Nombre}]]
+← [[{Name}]]
 
 ## Session Status
-_Estado de la última sesión de trabajo._
+_Status at the end of the last working session._
 
 ## Open Work
-_Tareas abiertas y bloqueos actuales._
+_Open tasks and current blockers._
 
 ## Handoff
-_Lo que debe saber la próxima sesión o agente para continuar._
+_What the next session or agent needs to know to continue._
 ```
 
-### Archivo 5: `{Nombre} Decisions.md`
+### File 5: `{Name} Decisions.md`
 
 ```markdown
 ---
 type: decisions
-project: {Nombre}
-updated: {fecha}
+project: {Name}
+updated: {date}
 ---
 
-# {Nombre} Decisions
+# {Name} Decisions
 
-← [[{Nombre}]]
+← [[{Name}]]
 
-_Registra aquí solo decisiones duraderas y todavía relevantes._
-_Formato sugerido: **Decisión** — Razón._
+_Record only durable, still-relevant decisions here._
+_Suggested format: **Decision** — Reason._
 ```
 
-### Archivo 6: `{Nombre} References.md`
+### File 6: `{Name} References.md`
 
 ```markdown
 ---
 type: references
-project: {Nombre}
-updated: {fecha}
+project: {Name}
+updated: {date}
 ---
 
-# {Nombre} References
+# {Name} References
 
-← [[{Nombre}]]
+← [[{Name}]]
 
 ## Remotes
-_URLs de repositorios, APIs, servicios externos._
+_Repository URLs, APIs, external services._
 
 ## Docs
-_Documentación relevante (enlaces o rutas)._
+_Relevant documentation (links or paths)._
 
 ## Related Notes
-_Otras notas del vault que aportan contexto._
+_Other vault notes that provide useful context._
 ```
 
-5. Después de crear todos los archivos, muestra al usuario una lista con los 6 archivos creados y sus rutas.
+### File 7: `{Name} Changelog.md`
+
+```markdown
+---
+type: changelog
+project: {Name}
+updated: {date}
+---
+
+# {Name} Changelog
+
+← [[{Name}]]
+
+> Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+
+## [Unreleased]
+_Changes in progress._
+
+## [Sprint 1] — {date}
+### Added
+### Changed
+### Fixed
+### Decided
+```
+
+> Subsections `Added`, `Changed`, `Fixed`, `Decided` are optional — include only the ones that apply per entry.
+
+5. After creating all files, show the user a list with the 7 created files and their paths.
 
 ---
 
-## Phase 2C — Actualizar proyecto (`update`)
+## Phase 2C — Update project (`update`)
 
-1. Pide al usuario:
-   - **Nombre del proyecto**
-   - **Ruta del vault** (default: `~/Documents/Vault`)
-   - **Qué sección actualizar** (State / Brief / Decisions / Map / References)
-   - **Contenido nuevo** para esa sección
+1. Ask the user:
+   - **Project name**
+   - **Vault path** (default: `~/Documents/Vault`)
+   - **Which file to update** (State / Brief / Decisions / Map / References / Changelog)
+   - **New content** for that section
 
-2. Localiza el archivo correspondiente con Read.
+2. Locate the corresponding file with Read.
 
-3. Usa Edit para reemplazar **solo la sección indicada** (el bloque entre el encabezado `## Sección` y el siguiente `##`). No reescribas el archivo completo.
+3. Use Edit to replace **only the indicated section** (the block between the `## Section` heading and the next `##`). Do not rewrite the entire file.
 
-4. Actualiza el campo `updated:` en el frontmatter a la fecha de hoy.
+4. Update the `updated:` field in the frontmatter to today's date.
 
-5. Confirma el cambio al usuario mostrando las líneas modificadas.
+5. Confirm the change to the user by showing the modified lines.
 
 ---
 
-## Reglas generales
+## General rules
 
-- Siempre usa `[[WikiLinks]]` estilo Obsidian para los enlaces entre notas (no rutas absolutas, no markdown links).
-- El nombre del proyecto en los wikilinks debe coincidir exactamente con el nombre del archivo (case-sensitive).
-- Si el vault no existe al crear un proyecto nuevo, créalo automáticamente antes de crear el proyecto (ejecuta el init implícitamente).
-- Si ya existe un archivo con el mismo nombre, advierte al usuario antes de sobreescribir.
-- Usa la fecha de hoy en formato `YYYY-MM-DD` en todos los campos `updated`.
+- Always use `[[WikiLinks]]` Obsidian-style for links between notes (no absolute paths, no standard markdown links).
+- The project name in wikilinks must match the file name exactly (case-sensitive).
+- If the vault does not exist when creating a new project, create it automatically before creating the project (run init implicitly).
+- If a file with the same name already exists, warn the user before overwriting.
+- Use today's date in `YYYY-MM-DD` format in all `updated` fields.
