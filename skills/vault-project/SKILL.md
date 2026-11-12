@@ -36,7 +36,7 @@ Read the user's arguments and classify the action:
 2. Expand `~` to the absolute home path using `echo $HOME`.
 3. Create the structure with Bash:
    ```bash
-   mkdir -p "{vault}/Projects"
+   mkdir -p "{vault}/Proyectos"
    ```
 4. Create `{vault}/START HERE - AI.md` with Write using this exact template:
 
@@ -56,11 +56,21 @@ Read this note before exploring or writing anything else in the vault.
 
 ## Project Entry Order
 For project work, read in this order:
-1. Project landing note in `Projects/`
+1. Project landing note in `Proyectos/`
 2. `Brief`
 3. `Map`
 4. `State`
 5. Only then inspect code, docs, or repo paths referenced there
+
+## Project Files
+Each project folder contains these 7 notes:
+1. `{Name}.md` — Landing
+2. `{Name} Brief.md`
+3. `{Name} Map.md`
+4. `{Name} State.md`
+5. `{Name} Decisions.md`
+6. `{Name} References.md`
+7. `{Name} Changelog.md`
 
 ## Rules
 - Write short, explicit notes.
@@ -117,11 +127,11 @@ Body: [Unreleased] · [{Sprint/version} — date] with subsections Added, Change
    - **Kind** (e.g. "software", "research", "design", "ops") — optional, default: "software"
    - **Remote** (repo URL or other remote) — optional, default: ""
 
-2. Expand `~` with `echo $HOME` and build the base path: `{vault}/Projects/{Name}/`
+2. Expand `~` with `echo $HOME` and build the base path: `{vault}/Proyectos/{Name}/`
 
 3. Create the folder:
    ```bash
-   mkdir -p "{vault}/Projects/{Name}"
+   mkdir -p "{vault}/Proyectos/{Name}"
    ```
 
 4. Create the 7 project files. Use today's date in `YYYY-MM-DD` format.
@@ -134,7 +144,7 @@ type: project
 status: active
 area: {area}
 updated: {date}
-root: Projects/{Name}/
+root: Proyectos/{Name}/
 kind: {kind}
 remote: "{remote}"
 priority: {priority}
